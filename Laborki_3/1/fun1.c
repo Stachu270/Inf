@@ -1,4 +1,4 @@
-#include "zad1.h"
+#include "head.h"
 #include <string.h>
 
 bool palindrom(char *napis)

@@ -1,14 +1,17 @@
 # Makefile
-all: zad2 clean
+all: prog clean
 
-zad2: main2.o zad2.o
-	gcc -o zad2 main2.o zad2.o
+prog: main.o fun1.o fun2.o
+	gcc -o prog main.o fun1.o fun2.o
 
-main2.o: main2.c
-	gcc -c main2.c
+main.o: main.c
+	gcc -c main.c
 
-zad2.o: zad2.c
-	gcc -c zad2.c
+fun1.o: fun1.c
+	gcc -c fun1.c
+
+fun2.o: fun2.c
+	gcc -c fun2.c
 
 clean:
 	rm -f *.o

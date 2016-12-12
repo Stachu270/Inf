@@ -1,4 +1,4 @@
-#include "zad2.h"
+#include "head.h"
 #include <stdio.h>
 
 int main(void)
