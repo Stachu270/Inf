@@ -3,8 +3,6 @@
 
 int main(int argc, char *argv[])
 {
-	
-	//char proba[] = "michal";
 	for (int i = 1; i < argc; i++)
 	{
 		if (palindrom(argv[i]))
@@ -12,5 +10,6 @@ int main(int argc, char *argv[])
 		else
 			printf("\"%s\" nie jest palindrom\n", argv[i]);
 	}
+	
 	return 0;
 }
