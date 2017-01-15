@@ -1,14 +1,15 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
 bool decode(void);
 bool foo(const int *org, const int *try, int white, int black);
-int * fill(int **tab, int size, int val, int num);
+int ** fill(int **tab, int *size, const int *org, int val, int num, int white, int black);
 
 int main(void)
 {
 	int a[4] = {5, 4, 3, 6};
 	int b[4] = {6, 3, 5, 4};
-	foo(a, b, 0, 0);
+	//foo(a, b, 0, 0);
 	
 	if (decode())
 		puts("I win");
@@ -21,21 +22,29 @@ int main(void)
 bool decode(void)
 {
 	int i = 0;
-	int w_prev = 0, b_prev = 0;
 	int white = 0, black = 0;
-	int tab[4] = {1, 1, 1, 1};
-	int mask[4] = {1, 1, 1, 1};
-	//int is[6] = {0, 0, 0, 0, 0, 0};
+	int tab[4] = {0, 0, 0, 0};
 	int x = 1;
 	int c = 0, c_p = 0;
-	int t = 0;
+	int **kol = (int **)malloc(50 * sizeof(int *));
+	kol[0] = (int *)malloc(4 * sizeof(int));
+	kol[0][0] = kol[0][1] = kol[0][2] = kol[0][3] = 0;
+	int r = 1;
 	
-	while (i < 10 && c != 4)
+	while (i < 10)
 	{
-		w_prev = white; b_prev = black; c_p = c;
+		//for (int j = 0; j < r; j++)
+		//	printf("[%d] [%d] [%d] [%d]?\n", kol[j][0], kol[j][1], kol[j][2], kol[j][3]);
+		//putchar('\n');
 		
 		for (int j = 0; j < 4; j++)
-			if (mask[j])
+			tab[j] = kol[0][j];
+		//printf("[%d] [%d] [%d] [%d]?\n", tab[0], tab[1], tab[2], tab[3]);
+		//getchar();
+		//getchar();
+		
+		for (int j = 0; j < 4; j++)
+			if (tab[j] == 0)
 				tab[j] = x;
 		
 		// wyswietlanie propozycji i pobieranie odpowiedzi
@@ -45,17 +54,16 @@ bool decode(void)
 		printf("black: ");
 		scanf("%d", &black);
 		
+		if (black == 4)
+			return true;
+		
 		c = white + black;
-		if (c - c_p> 0)
-			for (int j = 0; j < c - c_p; j++)
-				mask[t++] = 0;
-		//
-		//is[x-1] = black - b_prev;
-		x++;
+		kol = fill(kol, &r, tab, x, c - c_p, white, black);
+		
+		c_p = c;
+		x++; i++;
 	}
 	
-	if (c == 4)
-		return true;
 	return false;
 }
 
@@ -96,42 +104,93 @@ bool foo(const int *org, const int *try, int white, int black)
 	return false;
 }
 
-int * fill(int **tab, int &size, const int *org, int val, int num, int white, black);
+int** fill(int **tab, int *size, const int *org, int val, int num, int white, int black)
 {
 	int **t = (int **)malloc(50 * sizeof(int *));
-	int mask[5];
-	int masks[10][4];
 	int r = 0;
-	int k, j;
 	int tmp[4];
+	bool flag, koniec;
+	int j, l;
 	
 	for (int i = 0; i < *size; i++)
-	{
-		for (j = 0, k = 0; j < 4; j++)
-			if (tab[i][j] == 0)
-				mask[k++] = j;
-		mask[k] = -1;
-		
-		for (j = 0; j )
-		
+	{	
 		// wypelnianie tablicy tmp
-		for (int j = 0, k = 0; i < 4 && k < val; j++)
+		for (j = 0; j < 4; j++)
+			tmp[j] = tab[i][j];
+		
+		koniec = false;
+		int n = num, k = 0;
+		while (1)
 		{
-			if (tab[i][j] == 0)
-			{	
-				tmp[j] = val;
-				k++;
+			// ETAP 1 - wstawianie n wartosci val zamiast kolejnych zer
+			// teoretycznie w warunku moze byc samo n, ale sie ubezpieczam
+			for (j = k; j < 4 && n; j++)
+				if (tmp[j] == 0)
+				{	
+					tmp[j] = val;
+					n--;
+				}
+			
+			if (num == 0)
+				koniec = true;
+			n++;	
+			k = j - 1;
+			
+			// sprawdzanie i ew. dodanie do stosu
+			if (foo(org, tmp, white, black))
+			{
+				t[r++] = (int *)malloc(4 * sizeof(int));
+				for (int i = 0; i < 4; i++)
+					t[r-1][i] = tmp[i];
+			}
+			if (koniec)
+				break;
+			//printf("%d%d%d%d\n", tmp[0], tmp[1], tmp[2], tmp[3]);
+			
+			// ETAP 2 - glowny etap przesuwania
+			flag = false;
+			for (j = k + 1; j < 4; j++)
+			{
+				if (tmp[j] == 0)
+					flag = true;
+			}
+			if (flag)
+			{
+				tmp[k++] = 0;
+				continue;
 			}
 			else
-				tmp[j] = tab[i][j];
-		}	
-		
-		// sprawdzanie i ew. dodanie do stosu
-		if (foo(org, tmp, white, black))
-		{
-			t[r++] = (int *)malloc(4 * sizeof(int));
-			for (int i = 0; i < 4; i++)
-				t[r-1][i] = tmp[i];
+			{
+				// usuwa dany element i n kolejnych elementow
+				for (j = k, l = 0; l < n; j++)
+					if (tmp[j] == val)
+					{
+						tmp[j] = 0;
+						l++;
+					}
+				
+				flag = false;
+				for (j = k - 1; j >= 0; j--)
+				{
+					if (tmp[j] == 0)
+						flag = true;
+					
+					if (tmp[j] == val && flag)
+					{
+						n++;
+						k = j + 1;
+						tmp[j] = 0;
+						break;
+					}
+					if (tmp[j] == val && !flag)
+					{
+						tmp[j] = 0;
+						n++;
+					}
+				}
+				if (j < 0)
+					break;
+			}
 		}
 	}
 	
@@ -139,9 +198,7 @@ int * fill(int **tab, int &size, const int *org, int val, int num, int white, bl
 		free(tab[i]);
 	free(tab);
 	
-	tab = t;
-	t = NULL;
 	*size = r;
 	
-	return tab[0];
+	return t;
 }
