@@ -7,14 +7,15 @@ int ** fill(int **tab, int *size, const int *org, int val, int num, int white, i
 
 int main(void)
 {
-	int a[4] = {5, 4, 3, 6};
-	int b[4] = {6, 3, 5, 4};
+	//int a[4] = {5, 4, 3, 6};
+	//int b[4] = {6, 3, 5, 4};
 	//foo(a, b, 0, 0);
 	
 	if (decode())
 		puts("I win");
 	else
 		puts("You win");
+	system("Rozwiazanie.txt");
 	
 	return 0;
 }
@@ -30,12 +31,40 @@ bool decode(void)
 	kol[0] = (int *)malloc(4 * sizeof(int));
 	kol[0][0] = kol[0][1] = kol[0][2] = kol[0][3] = 0;
 	int r = 1;
+	FILE *plik = fopen("Rozwiazanie.txt", "w");
 	
 	while (i < 10)
 	{
+		
+		fprintf(plik, "Kolejka #%d\n", i + 1);
+		fprintf(plik, "Mozliwe warianty:\n");
+		if (r)
+		{
+			for (int i = 0; i < r; i++)
+				fprintf(plik, "  [%c] [%c] [%c] [%c]\n", (kol[i][0]) ? (kol[i][0] + '0') : 'X', (kol[i][1]) ? (kol[i][1] + '0') : 'X', (kol[i][2]) ? (kol[i][2] + '0') : 'X', (kol[i][3]) ? (kol[i][3] + '0') : 'X');
+			
+			if (!kol[0][0] || !kol[0][1] || !kol[0][2] || !kol[0][3])
+			{
+				fprintf(plik, "   gdzie X = {");
+				for (int i = x; i < 6; i++)
+					fprintf(plik, "%d, ", i);
+				fprintf(plik, "6}\n");
+			}
+		}
+		else
+			fprintf(plik, "  Brak mozliwosci.\n");
+		
+		//puts("###############");
 		//for (int j = 0; j < r; j++)
 		//	printf("[%d] [%d] [%d] [%d]?\n", kol[j][0], kol[j][1], kol[j][2], kol[j][3]);
-		//putchar('\n');
+		//puts("###############");
+		
+		if (r == 0)
+		{
+			printf("You little cheater!\n");
+			fclose(plik);
+			return true;
+		}
 		
 		for (int j = 0; j < 4; j++)
 			tab[j] = kol[0][j];
@@ -54,16 +83,29 @@ bool decode(void)
 		printf("black: ");
 		scanf("%d", &black);
 		
+		fprintf(plik, "  Zgadywanie: [%d] [%d] [%d] [%d]\n", tab[0], tab[1], tab[2], tab[3]);
+		fprintf(plik, "  Odpowiedz: czarne: %d, biale: %d\n", black, white);
+		
 		if (black == 4)
+		{	
+			fclose(plik);
 			return true;
+		}
 		
 		c = white + black;
+		if (c > 4 || c - c_p < 0)
+		{
+			printf("You little cheater!\n");
+			fclose(plik);
+			return true;
+		}
 		kol = fill(kol, &r, tab, x, c - c_p, white, black);
 		
 		c_p = c;
 		x++; i++;
 	}
 	
+	fclose(plik);
 	return false;
 }
 
@@ -130,7 +172,7 @@ int** fill(int **tab, int *size, const int *org, int val, int num, int white, in
 					tmp[j] = val;
 					n--;
 				}
-			
+			// jesli nie ma byc nic wstawione to po manipulacji na stosie wychodzi z petli
 			if (num == 0)
 				koniec = true;
 			n++;	
@@ -150,10 +192,9 @@ int** fill(int **tab, int *size, const int *org, int val, int num, int white, in
 			// ETAP 2 - glowny etap przesuwania
 			flag = false;
 			for (j = k + 1; j < 4; j++)
-			{
 				if (tmp[j] == 0)
 					flag = true;
-			}
+			
 			if (flag)
 			{
 				tmp[k++] = 0;
@@ -161,7 +202,7 @@ int** fill(int **tab, int *size, const int *org, int val, int num, int white, in
 			}
 			else
 			{
-				// usuwa dany element i n kolejnych elementow
+				// usuwa n kolejnych elementow (wlacznie z tym pierwszym)
 				for (j = k, l = 0; l < n; j++)
 					if (tmp[j] == val)
 					{
@@ -169,6 +210,7 @@ int** fill(int **tab, int *size, const int *org, int val, int num, int white, in
 						l++;
 					}
 				
+				// cofa sie
 				flag = false;
 				for (j = k - 1; j >= 0; j--)
 				{

@@ -28,10 +28,10 @@ bool match(const char *pat, const char *str)
 	{
 		if (pat[j] == '?')
 		{
-			if (isalpha(str[i]))
+			//if (isalpha(str[i]))
 				i++;
-			else
-				return false;
+			//else
+				//return false;
 		}
 		else if (pat[j] == '*')
 		{
@@ -85,7 +85,7 @@ bool match(const char *pat, const char *str)
 		j++;
 	}
 	
-	printf("%c %c", pat[j], str[i]);
+	//printf("%c %c", pat[j], str[i]);
 	if (str[i] == '\0' && pat[j] == '\0')
 		return true;
 	

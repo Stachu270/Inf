@@ -1,0 +1,57 @@
+Kolejka #1
+Mozliwe warianty:
+  [X] [X] [X] [X]
+   gdzie X = {1, 2, 3, 4, 5, 6}
+  Zgadywanie: [1] [1] [1] [1]
+  Odpowiedz: czarne: 1, biale: 0
+Kolejka #2
+Mozliwe warianty:
+  [1] [X] [X] [X]
+  [X] [1] [X] [X]
+  [X] [X] [1] [X]
+  [X] [X] [X] [1]
+   gdzie X = {2, 3, 4, 5, 6}
+  Zgadywanie: [1] [2] [2] [2]
+  Odpowiedz: czarne: 1, biale: 1
+Kolejka #3
+Mozliwe warianty:
+  [X] [1] [2] [X]
+  [X] [1] [X] [2]
+  [X] [2] [1] [X]
+  [X] [X] [1] [2]
+  [X] [2] [X] [1]
+  [X] [X] [2] [1]
+   gdzie X = {3, 4, 5, 6}
+  Zgadywanie: [3] [1] [2] [3]
+  Odpowiedz: czarne: 1, biale: 2
+Kolejka #4
+Mozliwe warianty:
+  [X] [1] [3] [2]
+  [3] [2] [1] [X]
+  [X] [2] [1] [3]
+  [3] [X] [1] [2]
+  [3] [2] [X] [1]
+  [X] [3] [2] [1]
+   gdzie X = {4, 5, 6}
+  Zgadywanie: [4] [1] [3] [2]
+  Odpowiedz: czarne: 0, biale: 3
+Kolejka #5
+Mozliwe warianty:
+  [3] [2] [1] [X]
+  [X] [2] [1] [3]
+  [3] [2] [X] [1]
+  [X] [3] [2] [1]
+   gdzie X = {5, 6}
+  Zgadywanie: [3] [2] [1] [5]
+  Odpowiedz: czarne: 2, biale: 2
+Kolejka #6
+Mozliwe warianty:
+  [5] [2] [1] [3]
+  [3] [2] [5] [1]
+  Zgadywanie: [5] [2] [1] [3]
+  Odpowiedz: czarne: 1, biale: 3
+Kolejka #7
+Mozliwe warianty:
+  [3] [2] [5] [1]
+  Zgadywanie: [3] [2] [5] [1]
+  Odpowiedz: czarne: 4, biale: 0
