@@ -2,92 +2,39 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <ctype.h>
-bool match(const char *pat, const char *str);
+#include <string.h>
+bool match(char *pattern, char *text);
 
 int main(void)
 {
-	char t1[50] = "*.doc", t2[50] = "abrak..fa .doadara.doc";
+	char t1[100], t2[100];
 	
+	printf("Wzorzec: ");
 	gets(t1);
-	//getchar();
+	printf("Tekst: ");
 	gets(t2);
 	
-	printf("%d\n", match(t1, t2));
+	printf("Wynik: %d\n", match(t1, t2));
 	
 	return 0;
 }
 
-bool match(const char *pat, const char *str)
-{
-	int i, j, k, s;
-	bool ret = false, flag;
-	char next;
+bool match(char *pattern, char *text)
+{	
+	if (*pattern == '\0')
+		return (*text == '\0') ? true : false;
 	
-	i = j = 0;
-	while (/*str[i] != '\0' && */pat[j] != '\0')
+	if (*pattern == '?')
+		return (*text == '\0') ? false : match(pattern + 1, text + 1);
+	else if (*pattern == '*')
 	{
-		if (pat[j] == '?')
+		do
 		{
-			//if (isalpha(str[i]))
-				i++;
-			//else
-				//return false;
-		}
-		else if (pat[j] == '*')
-		{
-			while (true)
-			{
-				k = j + 1;
-				next = pat[k];
-				// pomija wszystkie znaki az trafi na znak next
-				while (str[i] != '\0' && str[i] != next)
-					i++;
-				s = i;
-				
-				if (str[i] == '\0')
-					break;
-				
-				flag = true;
-				while (flag && pat[k] != '\0' && pat[k] != '*')
-				{
-					if (pat[k] == '?')
-					{
-						if (isalpha(str[i]))
-							i++;
-						else
-							flag = false;
-					}
-					else
-					{
-						if (str[i] == pat[k])
-							i++;
-						else
-							flag = false;
-					}
-					k++;
-				}
-				
-				if (flag == true)
-				{
-					j = k - 1;
-					break;
-				}
-				i = s + 1;
-			}
-		}
-		else
-		{
-			if (str[i] == pat[j])
-				i++;
-			else
-				return false;
-		}
-		j++;
+			if (match(pattern + 1, text))
+				return true;
+		} while (*text++ != '\0');
+		return false;
 	}
-	
-	//printf("%c %c", pat[j], str[i]);
-	if (str[i] == '\0' && pat[j] == '\0')
-		return true;
-	
-	return ret;
+	else
+		return (*pattern == *text && *text != '\0') ? match(pattern + 1, text + 1) : false;
 }
