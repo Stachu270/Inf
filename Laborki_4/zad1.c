@@ -9,13 +9,17 @@ int main(void)
 {
 	char t1[100], t2[100];
 	
-	printf("Wzorzec: ");
-	gets(t1);
-	printf("Tekst: ");
-	gets(t2);
-	
-	printf("Wynik: %d\n", match(t1, t2));
-	
+	while (true)
+	{
+		printf("Wzorzec: ");
+		gets(t1);
+		printf("Tekst: ");
+		gets(t2);
+		
+		printf("Wynik: %d\n", match(t1, t2));
+		if (t1[0] == '\0' && t2[0] == '\0')
+			break;
+	}
 	return 0;
 }
 
@@ -26,15 +30,15 @@ bool match(char *pattern, char *text)
 	
 	if (*pattern == '?')
 		return (*text == '\0') ? false : match(pattern + 1, text + 1);
-	else if (*pattern == '*')
+	if (*pattern == '*')
 	{
+		while (*(++pattern) == '*');
 		do
 		{
-			if (match(pattern + 1, text))
+			if (match(pattern, text))
 				return true;
 		} while (*text++ != '\0');
 		return false;
 	}
-	else
-		return (*pattern == *text && *text != '\0') ? match(pattern + 1, text + 1) : false;
+	return (*pattern == *text && *text != '\0') ? match(pattern + 1, text + 1) : false;
 }

@@ -2,15 +2,11 @@
 #include <stdbool.h>
 #include <stdlib.h>
 bool decode(void);
-bool foo(const int *org, const int *try, int white, int black);
+bool code(const int *org, const int *try, int white, int black);
 int ** fill(int **tab, int *size, const int *org, int val, int num, int white, int black);
 
 int main(void)
 {
-	//int a[4] = {5, 4, 3, 6};
-	//int b[4] = {6, 3, 5, 4};
-	//foo(a, b, 0, 0);
-	
 	if (decode())
 		puts("I win");
 	else
@@ -27,6 +23,7 @@ bool decode(void)
 	int tab[4] = {0, 0, 0, 0};
 	int x = 1;
 	int c = 0, c_p = 0;
+	bool win = false, cheat = false;
 	int **kol = (int **)malloc(50 * sizeof(int *));
 	kol[0] = (int *)malloc(4 * sizeof(int));
 	kol[0][0] = kol[0][1] = kol[0][2] = kol[0][3] = 0;
@@ -35,13 +32,18 @@ bool decode(void)
 	
 	while (i < 10)
 	{
-		
+		// WYPISYWANIE DO PLIKU
+		// ------------------------------------------------------------
 		fprintf(plik, "Kolejka #%d\n", i + 1);
 		fprintf(plik, "Mozliwe warianty:\n");
 		if (r)
 		{
 			for (int i = 0; i < r; i++)
-				fprintf(plik, "  [%c] [%c] [%c] [%c]\n", (kol[i][0]) ? (kol[i][0] + '0') : 'X', (kol[i][1]) ? (kol[i][1] + '0') : 'X', (kol[i][2]) ? (kol[i][2] + '0') : 'X', (kol[i][3]) ? (kol[i][3] + '0') : 'X');
+				fprintf(plik, "  [%c] [%c] [%c] [%c]\n", 
+				(kol[i][0]) ? (kol[i][0] + '0') : 'X',
+				(kol[i][1]) ? (kol[i][1] + '0') : 'X',
+				(kol[i][2]) ? (kol[i][2] + '0') : 'X',
+				(kol[i][3]) ? (kol[i][3] + '0') : 'X');
 			
 			if (!kol[0][0] || !kol[0][1] || !kol[0][2] || !kol[0][3])
 			{
@@ -52,65 +54,68 @@ bool decode(void)
 			}
 		}
 		else
-			fprintf(plik, "  Brak mozliwosci.\n");
-		
-		//puts("###############");
-		//for (int j = 0; j < r; j++)
-		//	printf("[%d] [%d] [%d] [%d]?\n", kol[j][0], kol[j][1], kol[j][2], kol[j][3]);
-		//puts("###############");
-		
-		if (r == 0)
 		{
-			printf("You little cheater!\n");
-			fclose(plik);
-			return true;
+			fprintf(plik, "  Brak mozliwosci.\n");
+			cheat = true;										// oprocz tej i kolejnej linijki
+			break;
 		}
+		// ------------------------------------------------------------
 		
+		// do tab przepisywana jest pierwsza tablica z tablicy wszystkich mozliwosci
+		// i wszystkie zera zamieniane sa na wartosc x
 		for (int j = 0; j < 4; j++)
-			tab[j] = kol[0][j];
-		//printf("[%d] [%d] [%d] [%d]?\n", tab[0], tab[1], tab[2], tab[3]);
-		//getchar();
-		//getchar();
+			tab[j] = (kol[0][j]) ? kol[0][j] : x;
 		
-		for (int j = 0; j < 4; j++)
-			if (tab[j] == 0)
-				tab[j] = x;
+		//for (int j = 0; j < 4; j++)
+			//if (tab[j] == 0)
+				//tab[j] = x;
 		
-		// wyswietlanie propozycji i pobieranie odpowiedzi
+		// WYSWIETLANIE PROPOZYCJI I POBIERANIE ODPOWIEDZI
+		// ----------------------------------------------------------------
 		printf("[%d] [%d] [%d] [%d]?\n", tab[0], tab[1], tab[2], tab[3]);
 		printf("white: ");
 		scanf("%d", &white);
 		printf("black: ");
 		scanf("%d", &black);
+		// ----------------------------------------------------------------
 		
+		// WYPISYWANIE DO PLIKU
+		// ------------------------------------------------------------------------------------
 		fprintf(plik, "  Zgadywanie: [%d] [%d] [%d] [%d]\n", tab[0], tab[1], tab[2], tab[3]);
 		fprintf(plik, "  Odpowiedz: czarne: %d, biale: %d\n", black, white);
+		// ------------------------------------------------------------------------------------
 		
 		if (black == 4)
 		{	
-			fclose(plik);
-			return true;
+			win = true;
+			break;
 		}
 		
 		c = white + black;
-		if (c > 4 || c - c_p < 0)
+		if (c > 4 || c - c_p < 0 || (x == 6 && c != 4))
 		{
-			printf("You little cheater!\n");
-			fclose(plik);
-			return true;
+			cheat = true;
+			break;
 		}
+		// WYWOLANIE WAZNEJ FUNKCJI KTORA AKTUALIZUJE TABLICE WSZYSTKICH MOZLIWOSCI
 		kol = fill(kol, &r, tab, x, c - c_p, white, black);
 		
 		c_p = c;
 		x++; i++;
 	}
 	
+	// SPRZATANIE PO ZABAWIE
+	for (int i = 0; i < r; i++)
+		free(kol[i]);
+	free(kol);
 	fclose(plik);
-	return false;
+	
+	if (cheat)
+		printf("You little cheater!\n");
+	return win | cheat;
 }
 
-// wlasciwie to wystarczy sprawdzenie ile jest black'ow
-bool foo(const int *org, const int *try, int white, int black)
+bool code(const int *org, const int *try, int white, int black)
 {
 	int b = 0, w = 0;
 	int try_c[4], org_c[4];
@@ -166,81 +171,94 @@ int** fill(int **tab, int *size, const int *org, int val, int num, int white, in
 		{
 			// ETAP 1 - wstawianie n wartosci val zamiast kolejnych zer
 			// teoretycznie w warunku moze byc samo n, ale sie ubezpieczam
+			// ------------------------------------------------------------
 			for (j = k; j < 4 && n; j++)
 				if (tmp[j] == 0)
 				{	
 					tmp[j] = val;
 					n--;
 				}
-			// jesli nie ma byc nic wstawione to po manipulacji na stosie wychodzi z petli
-			if (num == 0)
-				koniec = true;
 			n++;	
 			k = j - 1;
+			// ------------------------------------------------------------
 			
-			// sprawdzanie i ew. dodanie do stosu
-			if (foo(org, tmp, white, black))
+			// sprawdzanie i ewentualne dodanie do stosu
+			// ------------------------------------------------
+			if (code(org, tmp, white, black))
 			{
 				t[r++] = (int *)malloc(4 * sizeof(int));
 				for (int i = 0; i < 4; i++)
 					t[r-1][i] = tmp[i];
 			}
-			if (koniec)
-				break;
-			//printf("%d%d%d%d\n", tmp[0], tmp[1], tmp[2], tmp[3]);
+			// ------------------------------------------------
 			
-			// ETAP 2 - glowny etap przesuwania
+			// Jesli nic nie ma byc wstawione
+			if (num == 0)
+				break;
+			
+			// CZY Z PRZODU SA JESZCZE JAKIES ZERA?
+			// ------------------------------------------------
 			flag = false;
 			for (j = k + 1; j < 4; j++)
 				if (tmp[j] == 0)
 					flag = true;
+			// ------------------------------------------------
 			
 			if (flag)
 			{
+				// Jesli sa to zeruj element k-ty i kontunuuj
+				// ETAP 1 wstawi val na kolejnym zerze
 				tmp[k++] = 0;
 				continue;
 			}
-			else
+			else	// Jesli nie ma zer z przodu tzn. ze trzeba sie cofnac
 			{
-				// usuwa n kolejnych elementow (wlacznie z tym pierwszym)
+				// USUWA n KOLEJNYCH ELEMENTOW (wlacznie z tym pierwszym)
+				// --------------------------------------------------------
 				for (j = k, l = 0; l < n; j++)
 					if (tmp[j] == val)
 					{
 						tmp[j] = 0;
 						l++;
 					}
+				// --------------------------------------------------------
 				
 				// cofa sie
 				flag = false;
 				for (j = k - 1; j >= 0; j--)
 				{
+					// JESLI NATRAFI NA 0
 					if (tmp[j] == 0)
 						flag = true;
 					
-					if (tmp[j] == val && flag)
+					if (tmp[j] == val)
 					{
+						// ZAMIENIA W tab val NA 0 I ZLICZA ILE val USUNAL
 						n++;
-						k = j + 1;
 						tmp[j] = 0;
-						break;
-					}
-					if (tmp[j] == val && !flag)
-					{
-						tmp[j] = 0;
-						n++;
+						
+						// JESLI WYKRYTO 0 A POZNIEJ NATRAFIONO NA val TO CZAS PRZEJSC DO ETAP 1
+						if (flag)
+						{
+							k = j + 1;
+							break;
+						}
 					}
 				}
+				// TO OZNACZA ZE WSZYSTKIE KOMBINACJE ZOSTALY JUZ WYPROBOWANE
 				if (j < 0)
 					break;
 			}
 		}
 	}
 	
+	// SPRZATANIE PO ZABAWIE
+	// ------------------------------
 	for (int i = 0; i < *size; i++)
 		free(tab[i]);
 	free(tab);
-	
 	*size = r;
+	// ------------------------------
 	
 	return t;
 }
