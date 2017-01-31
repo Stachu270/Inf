@@ -3,43 +3,43 @@ Mozliwe warianty:
   [X] [X] [X] [X]
    gdzie X = {1, 2, 3, 4, 5, 6}
   Zgadywanie: [1] [1] [1] [1]
-  Odpowiedz: czarne: 2, biale: 0
+  Odpowiedz: czarne: 0, biale: 0
 Kolejka #2
 Mozliwe warianty:
-  [1] [1] [X] [X]
-  [1] [X] [1] [X]
-  [1] [X] [X] [1]
-  [X] [1] [1] [X]
-  [X] [1] [X] [1]
-  [X] [X] [1] [1]
+  [X] [X] [X] [X]
    gdzie X = {2, 3, 4, 5, 6}
-  Zgadywanie: [1] [1] [2] [2]
-  Odpowiedz: czarne: 1, biale: 1
+  Zgadywanie: [2] [2] [2] [2]
+  Odpowiedz: czarne: 1, biale: 0
 Kolejka #3
 Mozliwe warianty:
-  [1] [X] [1] [X]
-  [1] [X] [X] [1]
-  [X] [1] [1] [X]
-  [X] [1] [X] [1]
+  [2] [X] [X] [X]
+  [X] [2] [X] [X]
+  [X] [X] [2] [X]
+  [X] [X] [X] [2]
    gdzie X = {3, 4, 5, 6}
-  Zgadywanie: [1] [3] [1] [3]
-  Odpowiedz: czarne: 0, biale: 2
+  Zgadywanie: [2] [3] [3] [3]
+  Odpowiedz: czarne: 1, biale: 1
 Kolejka #4
 Mozliwe warianty:
-  [X] [1] [X] [1]
+  [X] [2] [3] [X]
+  [X] [2] [X] [3]
+  [X] [3] [2] [X]
+  [X] [X] [2] [3]
+  [X] [3] [X] [2]
+  [X] [X] [3] [2]
    gdzie X = {4, 5, 6}
-  Zgadywanie: [4] [1] [4] [1]
-  Odpowiedz: czarne: 3, biale: 0
+  Zgadywanie: [4] [2] [3] [4]
+  Odpowiedz: czarne: 0, biale: 3
 Kolejka #5
 Mozliwe warianty:
-  [4] [1] [X] [1]
-  [X] [1] [4] [1]
+  [X] [4] [2] [3]
+  [X] [3] [4] [2]
    gdzie X = {5, 6}
-  Zgadywanie: [4] [1] [5] [1]
-  Odpowiedz: czarne: 3, biale: 0
+  Zgadywanie: [5] [4] [2] [3]
+  Odpowiedz: czarne: 0, biale: 3
 Kolejka #6
 Mozliwe warianty:
-  [4] [1] [X] [1]
+  [X] [3] [4] [2]
    gdzie X = {6}
-  Zgadywanie: [4] [1] [6] [1]
+  Zgadywanie: [6] [3] [4] [2]
   Odpowiedz: czarne: 4, biale: 0
